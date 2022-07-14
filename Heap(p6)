@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MaxSize 1001
+#define ElementType int
+#define Min -10001
+
+struct PileNode
+{
+    ElementType pile[MaxSize];
+    int cnt;
+}mypile;
+
+void Insert();
+void OutPut();
+
+int main()
+{
+    int ElementNumber, count;
+    scanf("%d %d", &ElementNumber, &count);
+    mypile.cnt = 0;
+    mypile.pile[0] = Min;
+    for (int i = 0; i < ElementNumber; i++)
+    {
+        mypile.cnt++;
+        Insert();
+    }
+    int flag = 0;
+    for (int i = 0; i < count; i++)
+    {
+        if (!flag)
+        {
+            flag = 1;
+        }
+        else
+        {
+            printf("\n");
+        }
+        OutPut();
+    }
+    return 0;
+}
+
+void Insert()
+{
+    int tmp;
+    scanf("%d", &tmp);
+    int parent = mypile.cnt / 2;
+    int son = mypile.cnt;
+    while (mypile.pile[parent] > tmp)
+    {
+        mypile.pile[son] = mypile.pile[parent];
+        son = parent;
+        parent /= 2;
+    }
+    mypile.pile[son] = tmp;
+    return;
+}
+
+void OutPut()
+{
+    int leave;
+    int flag = 0;
+    scanf("%d", &leave);
+    for (int i = leave; i > 0; i /= 2)
+    {
+        if (!flag)
+        {
+            flag = 1;
+        }
+        else
+        {
+            printf(" ");
+        }
+        printf("%d", mypile.pile[i]);
+    }
+    return;
+}
