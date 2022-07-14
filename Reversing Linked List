@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define Max 100001
+#define Last 100000
+
+typedef struct Node *PtrNode;
+struct Node
+{
+    int data;
+    int next;
+};
+
+void reverse(PtrNode A, int Rcnt, int cnt);
+int Reverse(PtrNode A, int start, int Rcnt);
+int Count(PtrNode A);
+
+int main()
+{
+    int start, cnt, Rcnt;
+    int position;
+    scanf("%d %d %d", &start, &cnt, &Rcnt);
+    PtrNode A = (PtrNode)malloc(sizeof(struct Node) * Max);
+    A[Last].next = start;
+    int count = 0;
+    for (int i = 0; i < cnt; i++)
+    {
+        scanf("%d", &position);
+        scanf("%d %d", &A[position].data, &A[position].next);
+    }
+    count = Count(A);
+    reverse(A, Rcnt, count);
+    int flag = 0;
+    for (int i = A[Last].next; i != -1; i = A[i].next)
+    {
+        if (!flag)
+        {
+            flag = 1;
+        }
+        else
+        {
+            printf("\n");
+        }
+        if (A[i].next != -1)
+        {
+            printf("%05d %d %05d", i, A[i].data, A[i].next);
+        }
+        else
+        {
+            printf("%05d %d -1", i, A[i].data);
+        }
+    }
+    return 0;
+}
+
+void reverse(PtrNode A, int Rcnt, int cnt)
+{
+    int head = Last;
+    for (int i = cnt; i >= Rcnt; i -= Rcnt)
+    {
+        head = Reverse(A, head, Rcnt);
+    }
+    return;
+}
+
+int Reverse(PtrNode A, int start, int Rcnt)
+{
+    int count = 1;
+    int New = A[start].next;
+    int old = A[New].next;
+    int temp = A[old].next;
+    int final = New;
+    for (; count < Rcnt; count++)
+    {
+        A[old].next = New;
+        New = old;
+        old = temp;
+        temp = A[temp].next;
+    }
+    A[final].next = old;
+    A[start].next = New;
+    return final;
+}
+
+int Count(PtrNode A)
+{
+    int head = A[Last].next;
+    int count = 0;
+    while (head != -1)
+    {
+        count++;
+        head = A[head].next;
+    }
+    return count;
+}
