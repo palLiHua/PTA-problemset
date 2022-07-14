@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Stack *PtrStack;
+typedef int *Point;
+struct Stack
+{
+    int* A;
+    int Max;
+    int Position;
+};
+
+bool test(PtrStack Mystack, Point testdata, int cnt);
+void initial(PtrStack Mystack);
+bool push(PtrStack Mystack, int num);
+bool pop(PtrStack Mystack);
+
+int main()
+{
+    int Most, Number, TestCnt;
+    int flag = 0;
+    scanf("%d %d %d", &Most, &Number, &TestCnt);
+    PtrStack Mystack = (PtrStack)malloc(sizeof(struct Stack));
+    Mystack->A = (int*)malloc(sizeof(int) * Most);
+    Mystack->Max = Most;
+    initial(Mystack);
+    Point* Test = (Point*)malloc(sizeof(Point) * TestCnt);
+    for (int i = 0; i < TestCnt; i++)
+    {
+        Point newone = (Point)malloc(sizeof(int) * Number);
+        for (int j = 0; j < Number; j++)
+        {
+            scanf("%d", &newone[j]);
+        }
+        Test[i] = newone;
+    }
+    for (int i = 0; i < TestCnt; i++)
+    {
+        if (!flag)
+        {
+            flag = 1;
+        }
+        else
+        {
+            printf("\n");
+        }
+        if (test(Mystack, Test[i], Number))
+        {
+            printf("YES");
+        }
+        else
+        {
+            printf("NO");
+        }
+        initial(Mystack);
+    }
+    return 0;
+}
+
+bool test(PtrStack Mystack, Point testdata, int cnt)
+{
+    int temp;
+    bool Judge = true;
+    int j = 1;
+    for (int i = 0; i < cnt; i++)
+    {
+        temp = testdata[i];
+        while (Mystack->A[Mystack->Position] != temp && Judge)
+        {
+            Judge = push(Mystack, j++);
+        }
+        if (!Judge)
+        {
+            break;
+        }
+        else
+        {
+            Judge = pop(Mystack);
+        }
+    }
+    return Judge;
+}
+
+void initial(PtrStack Mystack)
+{
+    for (int i = 0; i < Mystack->Max; i++)
+    {
+        Mystack->A[i] = -1;
+    }
+    Mystack->Position = -1;
+    return;
+}
+
+bool push(PtrStack Mystack, int num)
+{
+    if ((Mystack->Position + 1) < Mystack->Max)
+    {
+        Mystack->Position += 1;
+        Mystack->A[Mystack->Position] = num;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool pop(PtrStack Mystack)
+{
+    if (Mystack->Position-- >= 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
