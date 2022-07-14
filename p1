@@ -1,0 +1,157 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define max 1001
+
+typedef struct Node * PtrToNode;
+struct Node
+{
+    int coef;
+    int expon;
+    PtrToNode next;
+};
+
+PtrToNode attach(PtrToNode head, int Coef, int Expon);
+PtrToNode create();
+PtrToNode input(PtrToNode head);
+PtrToNode multi(PtrToNode head1, PtrToNode head2);
+PtrToNode add(PtrToNode head1, PtrToNode head2);
+void print(PtrToNode head);
+int main()
+{
+    int cnt1, cnt2;
+    PtrToNode line1 = create();
+    PtrToNode line2 = create();
+    line1 = input(line1);
+    line2 = input(line2);
+    PtrToNode mulres = multi(line1, line2);
+    PtrToNode addres = add(line1, line2);
+    print(mulres);
+    printf("\n");
+    print(addres);
+    return 0;
+}
+
+PtrToNode attach(PtrToNode head, int Coef, int Expon)
+{
+    PtrToNode temp = head->next;
+    PtrToNode last = head;
+    int flag = 1;
+    while (temp)
+    {
+        if (temp->expon > Expon)
+        {
+            last = temp;
+            temp = temp->next;
+            continue;
+        }
+        else if (temp->expon == Expon)
+        {
+            if (!(temp->coef + Coef))
+            {
+                last->next = temp->next;
+                free(temp);
+            }
+            else
+            {
+                temp->coef += Coef;
+            }
+            flag = 0;
+        }
+        break;
+    }
+    if (flag)
+    {
+        PtrToNode newone = (PtrToNode)malloc(sizeof(struct Node));
+        newone->coef = Coef;
+        newone->expon = Expon;
+        newone->next = temp;
+        last->next = newone;
+    }
+    return head;
+}
+
+PtrToNode create()
+{
+    PtrToNode head = (PtrToNode)malloc(sizeof(struct Node));
+    head->next = NULL;
+    head->expon = max;
+    return head;
+}
+
+PtrToNode input(PtrToNode head)
+{
+    int cnt;
+    scanf("%d", &cnt);
+    head->coef = cnt;
+    int tempcoef, tempexpon;
+    for (int i = 0; i < cnt; i++)
+    {
+        scanf("%d %d", &tempcoef, &tempexpon);
+        attach(head, tempcoef, tempexpon);
+    }
+    return head;
+}
+
+PtrToNode multi(PtrToNode head1, PtrToNode head2)
+{
+    PtrToNode Mresult = create();
+    PtrToNode temp1 = head1->next;
+    PtrToNode temp2 = head2->next;
+    int tempcoef, tempexpon;
+    while (temp1)
+    {
+        while (temp2)
+        {
+            tempcoef = temp1->coef * temp2->coef;
+            tempexpon = temp1->expon + temp2->expon;
+            Mresult = attach(Mresult, tempcoef, tempexpon);
+            temp2 = temp2->next;
+        }
+        temp2 = head2->next;
+        temp1 = temp1->next;
+    }
+    return Mresult;
+}
+
+PtrToNode add(PtrToNode head1, PtrToNode head2)
+{
+    PtrToNode Aresult = create();
+    PtrToNode temp1 = head1->next;
+    PtrToNode temp2 = head2->next;
+    while (temp2)
+    {
+        Aresult = attach(Aresult, temp2->coef, temp2->expon);
+        temp2 = temp2->next;
+    }
+
+    while (temp1)
+    {
+        Aresult = attach(Aresult, temp1->coef, temp1->expon);
+        temp1 = temp1->next;
+    }
+    return Aresult;
+}
+
+void print(PtrToNode head)
+{
+    int flag = 1;
+    PtrToNode temp = head->next;
+    if (!temp)
+    {
+        printf("0 0");
+    }
+    while (temp)
+    {
+        if (!flag)
+        {
+            printf(" ");
+        }
+        printf("%d %d", temp->coef, temp->expon);
+        temp = temp->next;
+        if (flag)
+        {
+            flag = 0;
+        }
+    }
+    return;
+}
