@@ -1,0 +1,23 @@
+#include <stdio.h>
+int main(){
+	int cnt;
+	scanf("%d", &cnt);
+	int max = 0;
+	int temp;
+	int tempsum = 0;
+	for (; cnt > 0; cnt--)
+	{
+		scanf("%d", &temp);
+		tempsum += temp;
+		if (tempsum > max)
+		{
+			max = tempsum;
+		}
+		if (tempsum < 0)
+		{
+			tempsum = 0;
+		}
+	}
+	printf("%d", max);
+	return 0;
+} 
