@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node
+{
+    int* element;
+    int count;
+}myfile;
+
+void check();
+int SearchRoot(int x);
+void Insert();
+void Components();
+
+int main()
+{
+    int cnt;
+    scanf("%d\n", &cnt);
+    myfile.element = (int*)malloc(sizeof(int) * cnt);
+    myfile.count = cnt;
+    for (int i = 0; i < cnt; i++)
+    {
+        myfile.element[i] = -1;
+    }
+    char tmp;
+    int flag = 0;
+    do
+    {
+        scanf("%c", &tmp);
+        switch(tmp)
+        {
+            case 'C':
+                check();
+                break;
+            case 'I':
+                Insert();
+                break;
+            case 'S':
+                Components();
+                break;
+        }
+    }while (tmp != 'S');
+    return 0;
+}
+
+void check()
+{
+    int x, y;
+    scanf("%d %d\n", &x, &y);
+    if (SearchRoot(x - 1) == SearchRoot(y - 1))
+    {
+        printf("yes\n");
+    }
+    else
+    {
+        printf("no\n");
+    }
+    return;
+}
+
+int SearchRoot(int x)
+{
+    int tmp = x;
+    while (myfile.element[tmp] >= 0)
+    {
+        tmp = myfile.element[tmp];
+    }
+    return tmp;
+}
+
+void Insert()
+{
+    int x, y;
+    scanf("%d %d\n", &x, &y);
+    x--;
+    y--;
+    while (myfile.element[x] >= 0)
+    {
+        x = myfile.element[x];
+    }
+    while (myfile.element[y] >= 0)
+    {
+        y = myfile.element[y];
+    }
+    if (myfile.element[x] < myfile.element[y])
+    {
+        myfile.element[x] += myfile.element[y];
+        myfile.element[y] = x;
+    }
+    else
+    {
+        myfile.element[y] += myfile.element[x];
+        myfile.element[x] = y;
+    }
+    return;
+}
+
+void Components()
+{
+    int cnt = 0;
+    for (int i = 0; i < myfile.count; i++)
+    {
+        if (myfile.element[i] < 0)
+        {
+            cnt++;
+        }
+    }
+    if (cnt > 1)
+    {
+        printf("There are %d components.", cnt);
+    }
+    else
+    {
+        printf("The network is connected.");
+    }
+    return;
+}
