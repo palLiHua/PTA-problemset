@@ -1,0 +1,194 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define Vertex int
+#define WeightType int
+#define MaxVertexNum 10
+
+typedef struct GNode* PtrGNode;
+struct GNode
+{
+    int Nv;
+    int Ne;
+    WeightType G[MaxVertexNum][MaxVertexNum];
+};
+typedef PtrGNode Graph;
+
+typedef struct StackNode* PtrStack;
+struct StackNode
+{
+    int count;
+    Vertex store[MaxVertexNum];
+};
+typedef PtrStack Stack;
+
+typedef struct QueueNode* PtrQueue;
+struct QueueNode
+{
+    int head;
+    int rear;
+    int Q[MaxVertexNum];
+};
+typedef PtrQueue Queue;
+
+Graph CreateGraph();
+int BFS(Graph mygraph, int* flag);
+Stack CreateStack();
+void Push(Stack stack, Vertex a);
+Vertex Pop(Stack stack);
+void InitialZero(int* flag, int VertexNum);
+Queue CreateQueue();
+void EnQueue(Queue queue, Vertex a);
+Vertex DeQueue(Queue queue);
+void DFS(Graph mygraph, int* flag, Vertex now);
+
+int main()
+{
+    Graph mygraph = CreateGraph();
+    int* flag = (int*)malloc(sizeof(int) * mygraph->Nv);
+    InitialZero(flag, mygraph->Nv);
+    int check = 0;
+    for (int i = 0; i < mygraph->Nv; i++)
+    {
+        if (!flag[i])
+        {
+            printf("{ %d ", i);
+            DFS(mygraph, flag, i);
+            printf("}\n");
+        }
+    }
+    InitialZero(flag, mygraph->Nv);
+    do
+    {
+        check = BFS(mygraph, flag);
+    }while(check);
+    return 0;
+}
+
+Graph CreateGraph()
+{
+    int nv, ne;
+    scanf("%d %d", &nv, &ne);
+    Graph mygraph = (Graph)malloc(sizeof(struct GNode));
+    mygraph->Nv = nv;
+    mygraph->Ne = ne;
+    for (int i = 0; i < nv; i++)
+    {
+        for (int j = 0; j < nv; j++)
+        {
+            mygraph->G[i][j] = 0;
+        }
+    }
+    Vertex tmp1, tmp2;
+    for (int i = 0; i < ne; i++)
+    {
+        scanf("%d %d", &tmp1, &tmp2);
+        mygraph->G[tmp1][tmp2] = 1;
+        mygraph->G[tmp2][tmp1] = 1;
+    }
+    return mygraph;
+}
+
+int BFS(Graph mygraph, int* flag)
+{
+    Queue queue = CreateQueue();
+    int check = 0;
+    int i = 0;
+    for (; i < mygraph->Nv && flag[i]; i++);
+    if (i < mygraph->Nv)
+    {
+        check = 1;
+        flag[i] = 1;
+        printf("{ %d ", i);
+        while (i >= 0)
+        {
+            for (int j = 0; j < mygraph->Nv; j++)
+            {
+                if (!flag[j] && mygraph->G[i][j])
+                {
+                    flag[j] = 1;
+                    EnQueue(queue, j);
+                    printf("%d ", j);
+                }
+            }
+            i = DeQueue(queue);
+        }
+        printf("}\n");
+    }
+    return check;
+}
+
+Stack CreateStack()
+{
+    Stack stack = (Stack)malloc(sizeof(struct StackNode));
+    stack->count = 0;
+    return stack;
+}
+
+void Push(Stack stack, Vertex a)
+{
+    stack->store[stack->count++] = a;
+    return;
+}
+
+Vertex Pop(Stack stack)
+{
+    if (stack->count)
+    {
+        return stack->store[stack->count--];
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+void InitialZero(int* flag, int VertexNum)
+{
+    for (int i = 0; i < VertexNum; i++)
+    {
+        flag[i] = 0;
+    }
+    return;
+}
+
+Queue CreateQueue()
+{
+    Queue queue = (Queue)malloc(sizeof(struct QueueNode));
+    queue->head = 0;
+    queue->rear = 0;
+    return queue;
+}
+
+void EnQueue(Queue queue, Vertex a)
+{
+    queue->Q[queue->rear++] = a;
+    return;
+}
+
+Vertex DeQueue(Queue queue)
+{
+    if (queue->head == queue->rear)
+    {
+        return -1;
+    }
+    else
+    {
+        return queue->Q[queue->head++];
+    }
+}
+
+void DFS(Graph mygraph, int* flag, Vertex now)
+{
+    int i = 0;
+    flag[now] = 1;
+    for (; i < mygraph->Nv; i++)
+    {
+        if (!flag[i] && mygraph->G[now][i])
+        {
+            flag[i] = 1;
+            printf("%d ", i);
+            DFS(mygraph, flag, i);
+        }
+    }
+    return;
+}
