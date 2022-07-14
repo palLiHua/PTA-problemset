@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node *PtrNode;
+typedef struct Queue *PtrQueue;
+struct Node
+{
+    int left;
+    int right;
+};
+struct Queue
+{
+    int data;
+    PtrQueue next;
+};
+
+void print(PtrNode A, int Root);
+void push(PtrQueue head, int number);
+int pop(PtrQueue head);
+int main()
+{
+    int cnt;
+    scanf("%d", &cnt);
+    int root[cnt];
+    PtrNode A = (PtrNode)malloc(sizeof(struct Node) * cnt);
+    for (int i = 0; i < cnt; i++)
+    {
+        root[i] = 0;
+        A[i].left = -1;
+        A[i].right = -1;
+    }
+    char L, R;
+    for (int i = 0; i < cnt; i++)
+    {
+        scanf("\n%c %c", &L, &R);
+        if (L != '-')
+        {
+            A[i].left = L - '0';
+            root[A[i].left] = 1;
+        }
+        if (R != '-')
+        {
+            A[i].right = R - '0';
+            root[A[i].right] = 1;
+        }
+    }
+    int Root = 0;
+    for (int i = 0; i < cnt; i++)
+    {
+        if (!root[i])
+        {
+            Root = i;
+            break;
+        }
+    }
+    print(A, Root);
+    return 0;
+}
+
+void print(PtrNode A, int Root)
+{
+    int flag = 0;
+    PtrQueue head = (PtrQueue)malloc(sizeof(struct Queue));
+    head->next = NULL;
+    int temp = Root;
+    do
+    {
+        if (A[temp].left == -1 && A[temp].right == -1)
+        {
+            if (!flag)
+            {
+                flag = 1;
+            }
+            else
+            {
+                printf(" ");
+            }
+            printf("%d", temp);
+        }
+        else
+        {
+            if (A[temp].left != -1)
+            {
+                push(head, A[temp].left);
+            }
+            if (A[temp].right != -1)
+            {
+                push(head, A[temp].right);
+            }
+        }
+        temp = pop(head);
+    }while (temp != -1);
+    return;
+}
+
+void push(PtrQueue head, int number)
+{
+    PtrQueue temp = head;
+    while (temp->next)
+    {
+        temp = temp->next;
+    }
+    PtrQueue newone = (PtrQueue)malloc(sizeof(struct Queue));
+    newone->data = number;
+    newone->next = NULL;
+    temp->next = newone;
+    return;
+}
+
+int pop(PtrQueue head)
+{
+    PtrQueue temp = head->next;
+    if (temp)
+    {
+        int n = temp->data;
+        head->next = temp->next;
+        free(temp);
+        return n;
+    }
+    else
+    {
+        return -1;
+    }
+}
